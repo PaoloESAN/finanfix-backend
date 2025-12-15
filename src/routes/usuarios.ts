@@ -6,6 +6,12 @@ export const usuariosRoutes = new Elysia({ prefix: "/usuarios" })
         const usuarios = await prisma.usuarios.findMany();
         return usuarios;
     })
+    .get("/:id", async ({ params }) => {
+        const usuario = await prisma.usuarios.findUnique({
+            where: { id: Number(params.id) },
+        });
+        return usuario;
+    })
     .post(
         "/",
         async ({ body }) => {
