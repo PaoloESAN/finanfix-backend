@@ -16,6 +16,7 @@ export const transaccionesRoutes = new Elysia({ prefix: "/transacciones" })
         },
         {
             body: t.Object({
+                titulo: t.String(),
                 usuario_id: t.Number(),
                 categoria_id: t.Number(),
                 monto: t.Number(),

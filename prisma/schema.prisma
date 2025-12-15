@@ -26,6 +26,7 @@ model transacciones {
   fecha        DateTime   @default(dbgenerated("CURRENT_DATE")) @db.Date
   created_at   DateTime?  @default(now()) @db.Timestamp(6)
   updated_at   DateTime?  @default(now()) @db.Timestamp(6)
+  titulo       String     @db.VarChar(100)
   categorias   categorias @relation(fields: [categoria_id], references: [id], onUpdate: NoAction)
   usuarios     usuarios   @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
