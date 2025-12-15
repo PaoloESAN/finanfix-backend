@@ -2,9 +2,46 @@ import { Elysia, t } from "elysia";
 import { prisma } from "../lib/prisma";
 
 export const transaccionesRoutes = new Elysia({ prefix: "/transacciones" })
-    .get("/", async () => {
-        const transacciones = await prisma.transacciones.findMany();
+    .get("/", async ({ query }) => {
+        if (!query.periodo) {
+            return await prisma.transacciones.findMany();
+        }
+
+        const hoy = new Date();
+        let fechaInicio: Date;
+
+        switch (query.periodo) {
+            case "hoy":
+                fechaInicio = new Date(hoy.setHours(0, 0, 0, 0));
+                break;
+            case "semana":
+                fechaInicio = new Date();
+                fechaInicio.setDate(hoy.getDate() - 7);
+                break;
+            case "mes":
+                fechaInicio = new Date();
+                fechaInicio.setMonth(hoy.getMonth() - 1);
+                break;
+            case "año":
+                fechaInicio = new Date();
+                fechaInicio.setFullYear(hoy.getFullYear() - 1);
+                break;
+            default:
+                return await prisma.transacciones.findMany();
+        }
+
+        const transacciones = await prisma.transacciones.findMany({
+            where: {
+                fecha: {
+                    gte: fechaInicio,
+                },
+            },
+        });
         return transacciones;
+    }, {
+        query: t.Object({
+            periodo: t.Optional(t.String())
+        })
     })
     .post(
         "/",
