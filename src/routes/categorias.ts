@@ -16,7 +16,7 @@ export const categoriasRoutes = new Elysia({ prefix: "/categorias" })
         },
         {
             body: t.Object({
-                user_id: t.String(),
+                usuario_id: t.Number(),
                 nombre: t.String(),
                 es_predeterminada: t.Boolean(),
             }),
