@@ -3,6 +3,10 @@ import { usuariosRoutes } from "./routes/usuarios";
 import { categoriasRoutes } from "./routes/categorias";
 
 const app = new Elysia()
+  .onError(({ code, error }) => {
+    console.error(`Error ${code}: ${error}`);
+    return { success: false, message: error };
+  })
   .get("/", () => "Hello Elysia")
   .use(usuariosRoutes)
   .use(categoriasRoutes)
