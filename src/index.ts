@@ -3,9 +3,32 @@ import { usuariosRoutes } from "./routes/usuarios";
 import { categoriasRoutes } from "./routes/categorias";
 
 const app = new Elysia()
-  .onError(({ code, error }) => {
-    console.error(`Error ${code}: ${error}`);
-    return { success: false, message: error };
+  .onError(({ code, error, set }) => {
+    console.error(`Error ${code}:`, error);
+
+    if (code === "VALIDATION") {
+      set.status = 400;
+      return {
+        success: false,
+        error: "Datos inválidos. Verifica los campos requeridos.",
+      };
+    }
+    const errorMsg = typeof error === "string"
+      ? error
+      : error instanceof Error
+        ? error.message
+        : JSON.stringify(error);
+
+    if (errorMsg.includes("Unique constraint")) {
+      set.status = 409;
+      return { success: false, error: "El registro ya existe." };
+    }
+
+    set.status = 500;
+    return {
+      success: false,
+      error: "Error interno del servidor.",
+    };
   })
   .get("/", () => "Hello Elysia")
   .use(usuariosRoutes)
