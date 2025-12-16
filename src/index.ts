@@ -1,6 +1,8 @@
 import { Elysia } from "elysia";
 import { usuariosRoutes } from "./routes/usuarios";
 import { categoriasRoutes } from "./routes/categorias";
+import { transaccionesRoutes } from "./routes/transacciones";
+import { webhooksRoutes } from "./routes/webhooks";
 
 const app = new Elysia()
   .onError(({ code, error, set }) => {
@@ -33,6 +35,8 @@ const app = new Elysia()
   .get("/", () => "Hello Elysia")
   .use(usuariosRoutes)
   .use(categoriasRoutes)
+  .use(transaccionesRoutes)
+  .use(webhooksRoutes)
   .listen(process.env.PORT || 3000);
 
 console.log(
