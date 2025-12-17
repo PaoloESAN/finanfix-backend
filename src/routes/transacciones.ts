@@ -8,22 +8,26 @@ export const transaccionesRoutes = new Elysia({ prefix: "/transacciones" })
         }
 
         const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
         let fechaInicio: Date;
 
         switch (query.periodo) {
             case "hoy":
-                fechaInicio = new Date(hoy.setHours(0, 0, 0, 0));
-                break;
+                return await prisma.transacciones.findMany({
+                    where: {
+                        fecha: new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()),
+                    },
+                });
             case "semana":
-                fechaInicio = new Date();
+                fechaInicio = new Date(hoy);
                 fechaInicio.setDate(hoy.getDate() - 7);
                 break;
             case "mes":
-                fechaInicio = new Date();
+                fechaInicio = new Date(hoy);
                 fechaInicio.setMonth(hoy.getMonth() - 1);
                 break;
             case "año":
-                fechaInicio = new Date();
+                fechaInicio = new Date(hoy);
                 fechaInicio.setFullYear(hoy.getFullYear() - 1);
                 break;
             default:
