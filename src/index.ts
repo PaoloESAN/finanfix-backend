@@ -1,10 +1,16 @@
 import { Elysia } from "elysia";
 import { usuariosRoutes } from "./routes/usuarios";
 import { categoriasRoutes } from "./routes/categorias";
+import { cors } from "@elysiajs/cors";
 import { transaccionesRoutes } from "./routes/transacciones";
 import { webhooksRoutes } from "./routes/webhooks";
 
 const app = new Elysia()
+  .use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }))
   .onError(({ code, error, set }) => {
     console.error(`Error ${code}:`, error);
 
