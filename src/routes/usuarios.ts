@@ -1,18 +1,20 @@
 import { Elysia, t } from "elysia";
 import { prisma } from "../lib/prisma";
+import { authMiddleware } from "../middlewares/auth";
 
 export const usuariosRoutes = new Elysia({ prefix: "/usuarios" })
-    .get("/", async () => {
-        const usuarios = await prisma.usuarios.findMany();
-        return usuarios;
-    })
-    .get("/:id", async ({ params }) => {
+    .use(authMiddleware)
+    .get("/me", async ({ clerkUserId }) => {
         const usuario = await prisma.usuarios.findUnique({
-            where: { id: Number(params.id) },
+            where: { clerk_id: clerkUserId },
         });
         return usuario;
     })
-    .get("/clerk/:clerk_id", async ({ params }) => {
+    .get("/clerk/:clerk_id", async ({ params, clerkUserId }) => {
+        if (params.clerk_id !== clerkUserId) {
+            throw new Error("No autorizado");
+        }
+
         const usuario = await prisma.usuarios.findUnique({
             where: { clerk_id: params.clerk_id },
         });

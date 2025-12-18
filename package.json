@@ -8,6 +8,7 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
+    "@clerk/backend": "^2.27.1",
     "@elysiajs/cors": "^1.4.0",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
