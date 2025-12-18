@@ -2,24 +2,7 @@ import { Elysia, t } from "elysia";
 import { prisma } from "../lib/prisma";
 import { authMiddleware } from "../middlewares/auth";
 
-export const usuariosRoutes = new Elysia({ prefix: "/usuarios" })
-    .use(authMiddleware)
-    .get("/me", async ({ clerkUserId }) => {
-        const usuario = await prisma.usuarios.findUnique({
-            where: { clerk_id: clerkUserId },
-        });
-        return usuario;
-    })
-    .get("/clerk/:clerk_id", async ({ params, clerkUserId }) => {
-        if (params.clerk_id !== clerkUserId) {
-            throw new Error("No autorizado");
-        }
-
-        const usuario = await prisma.usuarios.findUnique({
-            where: { clerk_id: params.clerk_id },
-        });
-        return usuario;
-    })
+const publicRoutes = new Elysia({ prefix: "/usuarios" })
     .post("/sync", async ({ body, set }) => {
         const { clerkId, email, nombre, avatar_url } = body;
         try {
@@ -60,3 +43,26 @@ export const usuariosRoutes = new Elysia({ prefix: "/usuarios" })
             avatar_url: t.Optional(t.String())
         })
     });
+
+const protectedRoutes = new Elysia({ prefix: "/usuarios" })
+    .use(authMiddleware)
+    .get("/me", async ({ clerkUserId }) => {
+        const usuario = await prisma.usuarios.findUnique({
+            where: { clerk_id: clerkUserId },
+        });
+        return usuario;
+    })
+    .get("/clerk/:clerk_id", async ({ params, clerkUserId }) => {
+        if (params.clerk_id !== clerkUserId) {
+            throw new Error("No autorizado");
+        }
+
+        const usuario = await prisma.usuarios.findUnique({
+            where: { clerk_id: params.clerk_id },
+        });
+        return usuario;
+    });
+
+export const usuariosRoutes = new Elysia()
+    .use(publicRoutes)
+    .use(protectedRoutes);

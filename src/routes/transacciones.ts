@@ -16,6 +16,7 @@ export const transaccionesRoutes = new Elysia({ prefix: "/transacciones" })
         if (!query.periodo) {
             return await prisma.transacciones.findMany({
                 where: { usuario_id: usuario.id },
+                include: { categorias: true },
             });
         }
 
@@ -30,6 +31,7 @@ export const transaccionesRoutes = new Elysia({ prefix: "/transacciones" })
                         usuario_id: usuario.id,
                         fecha: new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()),
                     },
+                    include: { categorias: true },
                 });
             case "semana":
                 fechaInicio = new Date(hoy);
@@ -46,6 +48,7 @@ export const transaccionesRoutes = new Elysia({ prefix: "/transacciones" })
             default:
                 return await prisma.transacciones.findMany({
                     where: { usuario_id: usuario.id },
+                    include: { categorias: true },
                 });
         }
 
@@ -56,6 +59,7 @@ export const transaccionesRoutes = new Elysia({ prefix: "/transacciones" })
                     gte: fechaInicio,
                 },
             },
+            include: { categorias: true },
         });
         return transacciones;
     }, {

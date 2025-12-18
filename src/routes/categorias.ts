@@ -14,7 +14,12 @@ export const categoriasRoutes = new Elysia({ prefix: "/categorias" })
         }
 
         const categorias = await prisma.categorias.findMany({
-            where: { usuario_id: usuario.id },
+            where: {
+                OR: [
+                    { usuario_id: usuario.id },
+                    { usuario_id: null }
+                ]
+            },
         });
         return categorias;
     })
